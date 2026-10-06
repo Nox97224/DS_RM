@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Télécommande">
+<title>Télécommande</title>
+<style>
+  body { font-family: -apple-system, sans-serif; margin: 0; padding: 20px; text-align: center; background: #111; color: #eee; }
+  .grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 360px; margin: 20px auto; }
+  button { font-size: 28px; padding: 28px 0; border: none; border-radius: 16px; background: #5865f2; color: #fff; }
+  button:active { background: #3c45a5; }
+  .vide { visibility: hidden; }
+  #etat { min-height: 1.5em; color: #aaa; }
+  #reglage { font-size: 14px; color: #888; text-decoration: underline; }
+</style>
+</head>
+<body>
+<h2>Télécommande</h2>
+
+<div class="grille">
+  <span class="vide"></span>
+  <button onclick="envoyer(this)" data-label="Z" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('z')">Z</button>
+  <span class="vide"></span>
+
+  <button onclick="envoyer(this)" data-label="Q" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('q')">Q</button>
+  <button onclick="envoyer(this)" data-label="S" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('s')">S</button>
+  <button onclick="envoyer(this)" data-label="D" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('d')">D</button>
+</div>
+
+<p id="etat"></p>
+<a id="reglage" href="#" onclick="changerUrl(); return false;">Changer l'URL du webhook</a>
+
+<script>
+function getUrl() {
+  let url = localStorage.getItem("webhook");
+  if (!url) {
+    url = prompt("Colle l'URL du webhook Discord :");
+    if (url) localStorage.setItem("webhook", url.trim());
+  }
+  return url;
+}
+
+function changerUrl() {
+  localStorage.removeItem("webhook");
+  getUrl();
+}
+
+async function envoyer(bouton) {
+  const url = getUrl();
+  if (!url) return;
+  const etat = document.getElementById("etat");
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: bouton.dataset.cmd })
+    });
+    etat.textContent = r.ok ? "Envoyé : " + bouton.dataset.label : "Erreur " + r.status;
+  } catch (e) {
+    etat.textContent = "Échec de l'envoi";
+  }
+}
+</script>
+</body>
+</html>
