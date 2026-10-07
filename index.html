@@ -7,30 +7,135 @@
 <meta name="apple-mobile-web-app-title" content="Télécommande">
 <title>Télécommande</title>
 <style>
-  body { font-family: -apple-system, sans-serif; margin: 0; padding: 20px; text-align: center; background: #111; color: #eee; }
-  .grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 360px; margin: 20px auto; }
-  button { font-size: 28px; padding: 28px 0; border: none; border-radius: 16px; background: #5865f2; color: #fff; }
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, sans-serif;
+    margin: 0;
+    background: #111;
+    color: #eee;
+    text-align: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Dragon blanc en arrière-plan */
+  .fond {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .fond svg {
+    height: 92%;
+    width: auto;
+    max-width: 100%;
+    opacity: 0.3;
+    filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.35));
+  }
+
+  /* Contenu */
+  .contenu {
+    position: relative;
+    z-index: 1;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 20px 0;
+  }
+  h2 { margin: 0 0 8px; text-shadow: 0 2px 8px #000; }
+  #etat { min-height: 1.5em; color: #bbb; margin: 6px 0; text-shadow: 0 1px 6px #000; }
+  #reglage { font-size: 14px; color: #999; text-decoration: underline; }
+
+  /* Clavier collé en bas de la page */
+  .clavier {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 4px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(17, 17, 17, 0.82);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #2a2a2a;
+  }
+  .rangee { display: flex; gap: 4px; }
+  .rangee.centre { padding: 0 20%; }
+  button {
+    flex: 1;
+    min-width: 0;
+    font-size: 18px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: #5865f2;
+    color: #fff;
+    touch-action: manipulation;
+  }
   button:active { background: #3c45a5; }
-  .vide { visibility: hidden; }
-  #etat { min-height: 1.5em; color: #aaa; }
-  #reglage { font-size: 14px; color: #888; text-decoration: underline; }
+  .fleche { background: #3a3f5c; }
+  .fleche:active { background: #2a2e45; }
+  .espace { flex: 4; font-size: 14px; }
 </style>
 </head>
 <body>
-<h2>Télécommande</h2>
 
-<div class="grille">
-  <span class="vide"></span>
-  <button onclick="envoyer(this)" data-label="Z" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('z')">Z</button>
-  <span class="vide"></span>
-
-  <button onclick="envoyer(this)" data-label="Q" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('q')">Q</button>
-  <button onclick="envoyer(this)" data-label="S" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('s')">S</button>
-  <button onclick="envoyer(this)" data-label="D" data-cmd="!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('d')">D</button>
+<!-- Dragon blanc -->
+<div class="fond" aria-hidden="true">
+  <svg viewBox="0 0 400 610" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Corps -->
+    <g stroke="#fff">
+      <path d="M250 150 C120 200 120 300 260 340" stroke-width="32"/>
+      <path d="M260 340 C380 375 330 470 190 500" stroke-width="24"/>
+      <path d="M190 500 C110 518 120 570 200 592" stroke-width="14"/>
+    </g>
+    <!-- Écailles / côtes -->
+    <g stroke="#111" stroke-linecap="butt">
+      <path d="M250 150 C120 200 120 300 260 340" stroke-width="22" stroke-dasharray="3 13"/>
+      <path d="M260 340 C380 375 330 470 190 500" stroke-width="15" stroke-dasharray="3 12"/>
+    </g>
+    <!-- Pattes et griffes -->
+    <g stroke="#fff" stroke-width="6">
+      <path d="M146 262 L116 296 M116 296 L102 292 M116 296 L110 310 M116 296 L124 311"/>
+      <path d="M340 405 L374 432 M374 432 L388 430 M374 432 L376 446 M374 432 L364 444"/>
+    </g>
+    <!-- Pointe de la queue -->
+    <path d="M200 592 C220 598 236 590 244 578 C232 584 218 582 206 584 Z" fill="#fff" stroke="#fff" stroke-width="2"/>
+    <!-- Tête -->
+    <g fill="#fff" stroke="#fff" stroke-width="2">
+      <path d="M232 152 C224 120 240 94 276 88 L332 92 C348 95 350 110 332 116 L302 120 C312 134 300 152 270 160 Z"/>
+      <!-- Cornes -->
+      <path d="M262 92 C250 62 232 50 212 44 C230 58 238 74 244 96 Z"/>
+      <path d="M282 88 C277 60 264 40 246 28 C264 48 268 66 270 90 Z"/>
+      <!-- Crête -->
+      <path d="M236 150 C220 140 210 150 214 168 C224 158 230 160 238 164 Z"/>
+    </g>
+    <!-- Œil, narine, bouche -->
+    <path d="M288 104 C296 98 306 100 310 106 C302 108 294 108 288 104 Z" fill="#111"/>
+    <circle cx="335" cy="100" r="3" fill="#111"/>
+    <path d="M304 118 C318 116 328 114 340 111" stroke="#111" stroke-width="2"/>
+    <!-- Moustaches -->
+    <g stroke="#fff" stroke-width="3">
+      <path d="M328 114 C352 134 380 122 392 144"/>
+      <path d="M326 96 C352 70 380 80 392 60"/>
+    </g>
+  </svg>
 </div>
 
-<p id="etat"></p>
-<a id="reglage" href="#" onclick="changerUrl(); return false;">Changer l'URL du webhook</a>
+<div class="contenu">
+  <h2>Télécommande</h2>
+  <p id="etat"></p>
+  <a id="reglage" href="#" onclick="changerUrl(); return false;">Changer l'URL du webhook</a>
+</div>
+
+<!-- Clavier AZERTY collé en bas (généré par le script) -->
+<div class="clavier" id="clavier"></div>
 
 <script>
 function getUrl() {
@@ -47,6 +152,40 @@ function changerUrl() {
   getUrl();
 }
 
+const RANGEES = ["azertyuiop", "qsdfghjklm", "wxcvbn"];
+const FLECHES = [["←", "Gauche", "{LEFT}"], ["↑", "Haut", "{UP}"], ["↓", "Bas", "{DOWN}"], ["→", "Droite", "{RIGHT}"]];
+
+function creerBouton(texte, label, touche, classe) {
+  const b = document.createElement("button");
+  b.textContent = texte;
+  b.dataset.label = label;
+  b.dataset.key = touche;
+  b.setAttribute("aria-label", label);
+  if (classe) b.className = classe;
+  b.onclick = () => envoyer(b);
+  return b;
+}
+
+function construireClavier() {
+  const clavier = document.getElementById("clavier");
+  RANGEES.forEach((lettres, i) => {
+    const r = document.createElement("div");
+    r.className = "rangee" + (i === 2 ? " centre" : "");
+    for (const l of lettres) r.appendChild(creerBouton(l.toUpperCase(), l.toUpperCase(), l));
+    clavier.appendChild(r);
+  });
+  const bas = document.createElement("div");
+  bas.className = "rangee";
+  bas.appendChild(creerBouton("Espace", "Espace", " ", "espace"));
+  FLECHES.forEach(([sym, nom, k]) => bas.appendChild(creerBouton(sym, nom, k, "fleche")));
+  clavier.appendChild(bas);
+}
+construireClavier();
+
+function commande(touche) {
+  return "!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('" + touche + "')";
+}
+
 async function envoyer(bouton) {
   const url = getUrl();
   if (!url) return;
@@ -55,7 +194,7 @@ async function envoyer(bouton) {
     const r = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: bouton.dataset.cmd })
+      body: JSON.stringify({ content: commande(bouton.dataset.key) })
     });
     etat.textContent = r.ok ? "Envoyé : " + bouton.dataset.label : "Erreur " + r.status;
   } catch (e) {
