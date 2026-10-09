@@ -18,6 +18,7 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 
   /* Dragon blanc en arrière-plan */
@@ -38,52 +39,85 @@
     filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.35));
   }
 
-  /* Contenu */
+  /* Contenu : colonne qui s'arrête au-dessus du clavier */
   .contenu {
     position: relative;
     z-index: 1;
-    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    height: 100dvh;
+    box-sizing: border-box;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 0 var(--kb, 230px);
   }
-  h2 { margin: 0 0 6px; text-shadow: 0 2px 8px #000; font-size: 18px; }
-  #etat { min-height: 1.3em; color: #bbb; margin: 4px 0; text-shadow: 0 1px 6px #000; font-size: 13px; }
-  .liens { display: flex; justify-content: center; gap: 16px; font-size: 13px; }
+  h2 { margin: 0 0 4px; text-shadow: 0 2px 8px #000; font-size: 18px; }
+  #etat { min-height: 1.3em; color: #bbb; margin: 2px 0; text-shadow: 0 1px 6px #000; font-size: 13px; }
+  .liens { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; font-size: 13px; padding: 0 12px; }
   .liens a { color: #999; text-decoration: underline; }
 
-  /* NOUVEAU : écran du PC */
-  .ecran-conteneur {
-    position: relative;
-    z-index: 1;
-    margin: 10px auto 0;
-    width: 100%;
-    max-width: 480px;
-    padding: 0 10px;
-    box-sizing: border-box;
-  }
-  .ecran-boite {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: #000;
-    border-radius: 10px;
+  /* Ligne console (retour du PC) */
+  #console {
+    margin: 6px 10px 0;
+    padding: 5px 8px;
+    text-align: left;
+    font: 12px/1.3 ui-monospace, Menlo, Consolas, monospace;
+    color: #9fe29f;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    white-space: nowrap;
     overflow: hidden;
-    border: 1px solid #333;
+    text-overflow: ellipsis;
+    user-select: text;
+    -webkit-user-select: text;
   }
-  #ecran {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-  }
-  #ecran-message {
-    position: absolute;
-    inset: 0;
+  #console.vide { color: #777; }
+  #console.erreur { color: #ff8a8a; }
+  #console.ouvert { white-space: pre-wrap; word-break: break-word; overflow: auto; max-height: 30vh; }
+
+  /* Trackpad */
+  .pad {
+    flex: 1;
+    min-height: 80px;
+    margin: 6px 10px 0;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
-    color: #777;
-    padding: 10px;
+    background: rgba(30, 30, 38, 0.55);
+    border: 1px solid #3a3a46;
+    border-radius: 12px;
+    touch-action: none;
+    -webkit-touch-callout: none;
   }
+  .pad span { pointer-events: none; color: #666; font-size: 12px; letter-spacing: 0.12em; }
+
+  /* Boutons souris */
+  .souris { display: flex; gap: 6px; margin: 6px 10px 0; }
+  .souris button { height: 40px; font-size: 14px; background: #4a4f6a; }
+  .souris button.presse { background: #353950; }
+
+  /* Zone de texte */
+  .zone-texte { display: flex; gap: 6px; margin: 6px 10px 0; align-items: stretch; }
+  textarea {
+    flex: 1;
+    min-width: 0;
+    height: 62px;
+    box-sizing: border-box;
+    resize: none;
+    padding: 6px 8px;
+    font: 16px -apple-system, sans-serif;
+    color: #eee;
+    background: rgba(27, 27, 31, 0.85);
+    border: 1px solid #3a3a46;
+    border-radius: 8px;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .zone-texte .col { display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center; }
+  .zone-texte .col button { flex: none; width: 84px; height: 36px; font-size: 14px; }
+  .opt { font-size: 11px; color: #aaa; white-space: nowrap; }
+  .opt input { vertical-align: middle; margin: 0 2px 0 0; }
 
   /* Clavier collé en bas de la page */
   .clavier {
@@ -113,12 +147,17 @@
     border-radius: 8px;
     background: #5865f2;
     color: #fff;
-    touch-action: manipulation;
+    touch-action: none;
+    -webkit-touch-callout: none;
   }
-  button:active { background: #3c45a5; }
+  button.presse { background: #3c45a5; }
   .fleche { background: #3a3f5c; }
-  .fleche:active { background: #2a2e45; }
+  .fleche.presse { background: #2a2e45; }
+  .echap { flex: 2; font-size: 13px; background: #6b3a3a; }
+  .echap.presse { background: #4d2929; }
   .espace { flex: 4; font-size: 14px; }
+  /* Touche maintenue (appui long) */
+  button.tenu { background: #2e9e5b; box-shadow: 0 0 0 2px #7ee0a5 inset; }
 </style>
 </head>
 <body>
@@ -161,15 +200,26 @@
   <p id="etat"></p>
   <div class="liens">
     <a href="#" onclick="changerWebhook(); return false;">URL webhook</a>
-    <a href="#" onclick="changerEcran(); return false;">URL écran</a>
+    <a href="#" onclick="changerRetour(); return false;">Retour PC</a>
+    <a href="#" onclick="relacherTout(); return false;">Relâcher tout</a>
   </div>
-</div>
 
-<!-- NOUVEAU : écran du PC -->
-<div class="ecran-conteneur">
-  <div class="ecran-boite">
-    <img id="ecran" alt="Écran du PC" style="display:none;">
-    <div id="ecran-message">Configure l'URL de l'écran (lien « URL écran » ci-dessus)</div>
+  <!-- Ligne console : retour du PC (touche pour déplier) -->
+  <div id="console" class="vide"></div>
+
+  <!-- Trackpad -->
+  <div class="pad" id="pad"><span>TRACKPAD</span></div>
+
+  <!-- Clics souris (générés par le script) -->
+  <div class="souris" id="souris"></div>
+
+  <!-- Message complet à écrire sur le PC -->
+  <div class="zone-texte">
+    <textarea id="texte" rows="2" placeholder="Message à écrire sur le PC…"></textarea>
+    <div class="col">
+      <button id="btn-envoyer" type="button">Envoyer</button>
+      <label class="opt"><input type="checkbox" id="entree" checked>+ Entrée</label>
+    </div>
   </div>
 </div>
 
@@ -177,6 +227,12 @@
 <div class="clavier" id="clavier"></div>
 
 <script>
+/* ---------- Réglages ---------- */
+const DELAI_LONG = 350;      // ms avant qu'un appui devienne un appui long (touche maintenue)
+const SENS = 2.2;            // sensibilité du trackpad
+const PAUSE_MOUV = 400;      // ms minimum entre deux envois de déplacement (limite Discord)
+
+/* ---------- Webhook ---------- */
 function getWebhookUrl() {
   let url = localStorage.getItem("webhook");
   if (!url) {
@@ -190,98 +246,378 @@ function changerWebhook() {
   getWebhookUrl();
 }
 
-// NOUVEAU : gestion de l'URL du flux d'écran
-// Exemple attendu : http://100.x.x.x:5000/stream?token=change-moi-en-un-truc-aleatoire
-function getEcranUrl() {
-  return localStorage.getItem("ecranUrl");
+/* ---------- Commandes PowerShell ---------- */
+// Accès à user32 (souris + touches maintenues). # = guillemet double, remplacé côté PowerShell.
+const API = `Add-Type -Name W -Namespace U -ErrorAction SilentlyContinue -MemberDefinition ('[DllImport(#user32.dll#)] public static extern void mouse_event(int f,int x,int y,int d,int e); [DllImport(#user32.dll#)] public static extern void keybd_event(byte v,byte s,int f,int e); [DllImport(#user32.dll#)] public static extern int MapVirtualKey(int c,int t);'.Replace('#',[char]34)); `;
+
+function cmdSendKeys(sk) {
+  return "!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('" + sk + "')";
 }
-function changerEcran() {
-  let url = prompt(
-    "Colle l'URL du flux d'écran (ex: http://100.x.x.x:5000/stream?token=...) :",
-    getEcranUrl() || ""
-  );
-  if (url !== null) {
-    url = url.trim();
-    if (url) {
-      localStorage.setItem("ecranUrl", url);
-    } else {
-      localStorage.removeItem("ecranUrl");
+// Appui (haut=false) ou relâchement (haut=true) réel d'une touche : sert à l'appui long
+function cmdBascule(vk, ext, haut) {
+  const f = (ext ? 1 : 0) | (haut ? 2 : 0);
+  return "!ps " + API + "[U.W]::keybd_event(" + vk + ",[U.W]::MapVirtualKey(" + vk + ",0)," + f + ",0)";
+}
+function cmdSouris(flags) {
+  return "!ps " + API + flags.map(f => "[U.W]::mouse_event(" + f + ",0,0,0,0)").join("; ");
+}
+function cmdMouvement(dx, dy) {
+  const P = "[System.Windows.Forms.Cursor]::Position";
+  return "!ps Add-Type -AssemblyName System.Windows.Forms,System.Drawing; " + P +
+    "=New-Object System.Drawing.Point -ArgumentList (" + P + ".X+(" + dx + ")),(" + P + ".Y+(" + dy + "))";
+}
+
+/* ---------- File d'envoi (ordre garanti, reprise sur limite Discord) ---------- */
+const dormir = ms => new Promise(r => setTimeout(r, ms));
+const file = [];
+let enCours = false;
+
+function enqueue(tache) {
+  return new Promise(res => {
+    file.push({ tache, res });
+    if (!enCours) traiter();
+  });
+}
+async function traiter() {
+  enCours = true;
+  while (file.length) {
+    const { tache, res } = file.shift();
+    const c = tache();
+    res(c ? await poster(c) : true);
+  }
+  enCours = false;
+}
+function envoyerCmd(cmd, label) {
+  return enqueue(() => ({ cmd, label }));
+}
+
+async function poster(c) {
+  const url = getWebhookUrl();
+  if (!url) return false;
+  const etat = document.getElementById("etat");
+  for (let essai = 0; essai < 4; essai++) {
+    try {
+      const r = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: c.cmd })
+      });
+      if (r.status === 429) {
+        let s = 1;
+        try { s = (await r.json()).retry_after || 1; } catch (_) {}
+        await dormir(s * 1000 + 50);
+        continue;
+      }
+      etat.textContent = r.ok ? c.label : "Erreur " + r.status;
+      return r.ok;
+    } catch (e) {
+      etat.textContent = "Échec de l'envoi";
+      await dormir(400);
     }
-    demarrerEcran();
   }
+  return false;
 }
-function demarrerEcran() {
-  const img = document.getElementById("ecran");
-  const msg = document.getElementById("ecran-message");
-  const url = getEcranUrl();
-  if (!url) {
-    img.style.display = "none";
-    msg.style.display = "flex";
-    msg.textContent = "Configure l'URL de l'écran (lien « URL écran » ci-dessus)";
-    return;
-  }
-  img.onload = () => {
-    img.style.display = "block";
-    msg.style.display = "none";
+
+/* ---------- Boutons (tap = appui bref, appui long = touche maintenue) ---------- */
+const tenus = new Set();
+
+function defTouche(sk, vk, ext) {
+  return {
+    tap: () => cmdSendKeys(sk),
+    bas: () => cmdBascule(vk, ext, false),
+    haut: () => cmdBascule(vk, ext, true)
   };
-  img.onerror = () => {
-    img.style.display = "none";
-    msg.style.display = "flex";
-    msg.textContent = "Impossible de charger le flux. Vérifie Tailscale et l'URL.";
-  };
-  img.src = url;
 }
-demarrerEcran();
 
-const RANGEES = ["azertyuiop", "qsdfghjklm", "wxcvbn"];
-const FLECHES = [["←", "Gauche", "{LEFT}"], ["↑", "Haut", "{UP}"], ["↓", "Bas", "{DOWN}"], ["→", "Droite", "{RIGHT}"]];
-
-function creerBouton(texte, label, touche, classe) {
+function creerBouton(texte, label, def, classe) {
   const b = document.createElement("button");
+  b.type = "button";
   b.textContent = texte;
-  b.dataset.label = label;
-  b.dataset.key = touche;
   b.setAttribute("aria-label", label);
   if (classe) b.className = classe;
-  b.onclick = () => envoyer(b);
+  let minuteur = null, maintenu = false, actif = null;
+
+  const relacher = () => {
+    if (!maintenu) return;
+    maintenu = false;
+    b.classList.remove("tenu");
+    tenus.delete(relacher);
+    envoyerCmd(def.haut(), "Relâché : " + label);
+  };
+
+  b.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (actif !== null) return;
+    actif = e.pointerId;
+    try { b.setPointerCapture(e.pointerId); } catch (_) {}
+    b.classList.add("presse");
+    if (def.bas) {
+      minuteur = setTimeout(() => {
+        minuteur = null;
+        maintenu = true;
+        b.classList.add("tenu");
+        tenus.add(relacher);
+        envoyerCmd(def.bas(), "Maintenu : " + label);
+      }, DELAI_LONG);
+    }
+  });
+
+  const fin = e => {
+    if (e.pointerId !== actif) return;
+    actif = null;
+    b.classList.remove("presse");
+    clearTimeout(minuteur);
+    minuteur = null;
+    if (maintenu) { relacher(); return; }
+    if (e.type === "pointerup") envoyerCmd(def.tap(), "Envoyé : " + label);
+  };
+  b.addEventListener("pointerup", fin);
+  b.addEventListener("pointercancel", fin);
+  b.addEventListener("contextmenu", e => e.preventDefault());
   return b;
 }
+
+function relacherTout() {
+  [...tenus].forEach(f => f());
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden) relacherTout(); });
+window.addEventListener("pagehide", relacherTout);
+
+/* ---------- Clavier ---------- */
+const RANGEES = ["azertyuiop", "qsdfghjklm", "wxcvbn"];
+const FLECHES = [
+  ["←", "Gauche", "{LEFT}", 37],
+  ["↑", "Haut", "{UP}", 38],
+  ["↓", "Bas", "{DOWN}", 40],
+  ["→", "Droite", "{RIGHT}", 39]
+];
 
 function construireClavier() {
   const clavier = document.getElementById("clavier");
   RANGEES.forEach((lettres, i) => {
     const r = document.createElement("div");
     r.className = "rangee" + (i === 2 ? " centre" : "");
-    for (const l of lettres) r.appendChild(creerBouton(l.toUpperCase(), l.toUpperCase(), l));
+    for (const l of lettres) {
+      const L = l.toUpperCase();
+      r.appendChild(creerBouton(L, L, defTouche(l, L.charCodeAt(0), false)));
+    }
     clavier.appendChild(r);
   });
   const bas = document.createElement("div");
   bas.className = "rangee";
-  bas.appendChild(creerBouton("Espace", "Espace", " ", "espace"));
-  FLECHES.forEach(([sym, nom, k]) => bas.appendChild(creerBouton(sym, nom, k, "fleche")));
+  bas.appendChild(creerBouton("Échap", "Échap", defTouche("{ESC}", 27, false), "echap"));
+  bas.appendChild(creerBouton("Espace", "Espace", defTouche(" ", 32, false), "espace"));
+  FLECHES.forEach(([sym, nom, sk, vk]) =>
+    bas.appendChild(creerBouton(sym, nom, defTouche(sk, vk, true), "fleche")));
   clavier.appendChild(bas);
 }
 construireClavier();
 
-function commande(touche) {
-  return "!ps Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('" + touche + "')";
+/* Hauteur du clavier -> la colonne du haut s'arrête juste au-dessus */
+const clavierEl = document.getElementById("clavier");
+function majHauteur() {
+  document.documentElement.style.setProperty("--kb", clavierEl.offsetHeight + "px");
+}
+if (window.ResizeObserver) new ResizeObserver(majHauteur).observe(clavierEl);
+window.addEventListener("resize", majHauteur);
+majHauteur();
+
+/* ---------- Boutons souris ---------- */
+const SOURIS = {
+  gauche: { tap: () => cmdSouris([2, 4]), bas: () => cmdSouris([2]), haut: () => cmdSouris([4]) },
+  droit:  { tap: () => cmdSouris([8, 16]), bas: () => cmdSouris([8]), haut: () => cmdSouris([16]) },
+  double: { tap: () => cmdSouris([2, 4, 2, 4]) }
+};
+(function () {
+  const zone = document.getElementById("souris");
+  zone.appendChild(creerBouton("Clic gauche", "Clic gauche", SOURIS.gauche));
+  zone.appendChild(creerBouton("Double-clic", "Double-clic", SOURIS.double));
+  zone.appendChild(creerBouton("Clic droit", "Clic droit", SOURIS.droit));
+})();
+
+/* ---------- Trackpad ---------- */
+const pad = document.getElementById("pad");
+const pts = new Map();
+let t0 = 0, bouge = 0, maxPts = 0;
+let mvx = 0, mvy = 0, mvEnFile = false, dernierMouv = 0;
+
+function planifierMouvement() {
+  if (mvEnFile) return;
+  mvEnFile = true;
+  const attente = Math.max(0, PAUSE_MOUV - (Date.now() - dernierMouv));
+  setTimeout(() => {
+    enqueue(() => {
+      mvEnFile = false;
+      dernierMouv = Date.now();
+      const dx = Math.round(mvx), dy = Math.round(mvy);
+      mvx -= dx; mvy -= dy;
+      if (!dx && !dy) return null;
+      return { cmd: cmdMouvement(dx, dy), label: "Souris : " + dx + ", " + dy };
+    });
+  }, attente);
 }
 
-async function envoyer(bouton) {
-  const url = getWebhookUrl();
-  if (!url) return;
-  const etat = document.getElementById("etat");
-  try {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: commande(bouton.dataset.key) })
-    });
-    etat.textContent = r.ok ? "Envoyé : " + bouton.dataset.label : "Erreur " + r.status;
-  } catch (e) {
-    etat.textContent = "Échec de l'envoi";
+pad.addEventListener("pointerdown", e => {
+  try { pad.setPointerCapture(e.pointerId); } catch (_) {}
+  if (pts.size === 0) { t0 = performance.now(); bouge = 0; maxPts = 0; }
+  pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  maxPts = Math.max(maxPts, pts.size);
+  e.preventDefault();
+});
+pad.addEventListener("pointermove", e => {
+  const p = pts.get(e.pointerId);
+  if (!p) return;
+  const dx = e.clientX - p.x, dy = e.clientY - p.y;
+  p.x = e.clientX; p.y = e.clientY;
+  bouge += Math.abs(dx) + Math.abs(dy);
+  if (pts.size === 1) {            // un doigt = déplacer le curseur
+    mvx += dx * SENS;
+    mvy += dy * SENS;
+    planifierMouvement();
+  }
+});
+function finPad(e) {
+  if (!pts.has(e.pointerId)) return;
+  pts.delete(e.pointerId);
+  if (pts.size === 0 && e.type === "pointerup" && performance.now() - t0 < 250 && bouge < 10) {
+    // tape = clic gauche, tape à deux doigts = clic droit
+    if (maxPts >= 2) envoyerCmd(SOURIS.droit.tap(), "Envoyé : clic droit");
+    else envoyerCmd(SOURIS.gauche.tap(), "Envoyé : clic gauche");
   }
 }
+pad.addEventListener("pointerup", finPad);
+pad.addEventListener("pointercancel", finPad);
+pad.addEventListener("contextmenu", e => e.preventDefault());
+
+/* ---------- Message complet ---------- */
+function echapperCar(ch) {
+  if (ch === "\r") return "";
+  if (ch === "\n") return "{ENTER}";
+  if ("+^%~(){}[]".includes(ch)) return "{" + ch + "}";
+  if ("'‘’‚‛".includes(ch)) return ch + ch;   // apostrophes : doublées pour PowerShell
+  return ch;
+}
+function decouper(texte) {
+  const morceaux = [];
+  let cur = "";
+  for (const ch of texte) {
+    const e = echapperCar(ch);
+    if (cur.length + e.length > 1700) { morceaux.push(cur); cur = ""; }   // limite Discord : 2000 caractères
+    cur += e;
+  }
+  if (cur) morceaux.push(cur);
+  return morceaux;
+}
+async function envoyerTexte() {
+  const zone = document.getElementById("texte");
+  let t = zone.value;
+  if (!t.trim()) return;
+  const n = zone.value.length;
+  if (document.getElementById("entree").checked) t += "\n";
+  const res = await Promise.all(decouper(t).map(m =>
+    enqueue(() => ({ cmd: cmdSendKeys(m), label: "Envoyé : message (" + n + " car.)" }))));
+  if (res.every(Boolean)) zone.value = "";
+}
+document.getElementById("btn-envoyer").addEventListener("click", envoyerTexte);
+document.getElementById("texte").addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); envoyerTexte(); }
+});
+
+/* ---------- Ligne console : retour du PC ---------- */
+// Lit les réponses du bot dans le canal Discord (il faut l'ID du canal et le token du bot).
+const cEl = document.getElementById("console");
+let sortie = "", classeSortie = "vide";
+function rendreConsole() {
+  const ouvert = cEl.classList.contains("ouvert");
+  cEl.className = classeSortie + (ouvert ? " ouvert" : "");
+  cEl.textContent = "› " + (ouvert ? sortie : sortie.replace(/\s*\n\s*/g, " ⏎ "));
+}
+function ecrireConsole(t, classe) {
+  sortie = t;
+  classeSortie = classe || "";
+  rendreConsole();
+}
+cEl.addEventListener("click", () => { cEl.classList.toggle("ouvert"); rendreConsole(); });
+
+function getRetour() {
+  try { return JSON.parse(localStorage.getItem("retour") || "null"); } catch (_) { return null; }
+}
+function changerRetour() {
+  const cur = getRetour() || {};
+  const canal = prompt("ID du canal Discord où le bot répond (vide = désactiver) :", cur.canal || "");
+  if (canal === null) return;
+  if (!canal.trim()) {
+    localStorage.removeItem("retour");
+    demarrerRetour();
+    return;
+  }
+  const token = prompt("Token du bot (celui qui exécute les commandes) :", cur.token || "");
+  if (!token || !token.trim()) return;
+  localStorage.setItem("retour", JSON.stringify({ canal: canal.trim(), token: token.trim() }));
+  demarrerRetour();
+}
+
+function texteMessage(m) {
+  let t = (m.content || "").replace(/```[a-z]*\n?/gi, "").trim();
+  if (!t && m.embeds && m.embeds.length) {
+    const e = m.embeds[0];
+    t = [e.title, e.description].filter(Boolean).join(" — ");
+  }
+  if (!t && m.attachments && m.attachments.length) t = "(pièce jointe : " + m.attachments[0].filename + ")";
+  return t || "(message vide)";
+}
+
+let minuterieRetour = null, dernierId = null, initialise = false, genRetour = 0;
+
+function demarrerRetour() {
+  clearTimeout(minuterieRetour);
+  dernierId = null;
+  initialise = false;
+  genRetour++;
+  if (!getRetour()) {
+    ecrireConsole("Retour PC non configuré (lien « Retour PC »)", "vide");
+    return;
+  }
+  ecrireConsole("Retour PC : en attente…", "vide");
+  sonder(genRetour);
+}
+
+async function sonder(gen) {
+  const cfg = getRetour();
+  if (!cfg || gen !== genRetour) return;
+  let delai = 2000;
+  if (!document.hidden) {
+    try {
+      const q = dernierId ? "?limit=10&after=" + dernierId : (initialise ? "?limit=10" : "?limit=1");
+      const r = await fetch(
+        "https://discord.com/api/v10/channels/" + encodeURIComponent(cfg.canal) + "/messages" + q,
+        { headers: { Authorization: "Bot " + cfg.token } }
+      );
+      if (gen !== genRetour) return;
+      if (r.status === 429) {
+        let s = 2;
+        try { s = (await r.json()).retry_after || 2; } catch (_) {}
+        delai = s * 1000 + 100;
+      } else if (!r.ok) {
+        ecrireConsole("Retour PC : erreur " + r.status +
+          (r.status === 401 ? " (token invalide ?)" : " (ID du canal ou droits du bot ?)"), "erreur");
+        return;
+      } else {
+        const msgs = (await r.json()).sort((a, b) => (BigInt(a.id) < BigInt(b.id) ? -1 : 1));
+        if (msgs.length) dernierId = msgs[msgs.length - 1].id;
+        if (initialise) {
+          const reps = msgs.filter(m => !m.webhook_id);   // on ignore nos propres envois (webhook)
+          if (reps.length) ecrireConsole(texteMessage(reps[reps.length - 1]));
+        }
+        initialise = true;
+      }
+    } catch (_) {
+      ecrireConsole("Retour PC : réseau injoignable", "erreur");
+    }
+  }
+  minuterieRetour = setTimeout(() => sonder(gen), delai);
+}
+demarrerRetour();
 </script>
 </body>
 </html>
