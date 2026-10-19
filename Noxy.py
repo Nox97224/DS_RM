@@ -126,9 +126,6 @@ async def on_message(message):
 
 
 
-threading.Thread(target=client.run, args=(TOKEN_DISCORD,), daemon=True).start()
-threading.Thread(target=lancer_serveur_ecran, daemon=True).start()
-time.sleep(1)  # laisse Flask démarrer avant d'ouvrir le tunnel dessus
 
 
 envoyer_discord("Welcome to distance remote\n\n Made by NOX!\n\n")
