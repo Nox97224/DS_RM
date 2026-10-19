@@ -10,14 +10,15 @@ import discord
 
 
 WEBHOOK = "https://discord.com/api/webhooks/1555293931430871231/138UORmIQmU_TLRIniBJ6k3r5y4aI1sM59Mc34ExacZrS79beXOkLL-UfBncmYTYWAxb"
-TOKEN_DISCORD = "MTU1NTM2NjA2NTkzOTI5MjIxMA.GwJ7A5.8ej-emq-ty_tP3l5L9AZ0064n5Qm8Cx4ZV_x88"
+TOKEN_DISCORD = "MTU1NTM2NjA2NTkzOTI5MjIxMA.GIllw"
+
 CANAL_ID = 1555293859955609700       
 MON_ID_DISCORD = 1539548235251580940
 
 DELAI_ANTIDOUBLON = 3  # secondes
 derniers = {}          # texte du chat -> heure du dernier traitement
 
-
+TOKEN_DISCORD += "p.oxpl6uFATirSuT7a-jc9wtg29a5qpadOV2tvGI"
 
 def deja_traite(texte):
     maintenant = time.time()
